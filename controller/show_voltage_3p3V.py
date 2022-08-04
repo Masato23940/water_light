@@ -10,7 +10,7 @@ class Potentionmeter:
   def setup_adc(self):
     if(self.adc.detectI2C(0x48)):
       self.adc = PCF8591()
-    elif(adc.detectI2C(0x4b)):
+    elif(self.adc.detectI2C(0x4b)):
       self.adc = ADS7830()
     else:
       print("No correct I2C address found, \n"
@@ -18,26 +18,25 @@ class Potentionmeter:
       "Program Exit. \n");
       exit(-1)
 
-
-  def voltage(self):
+  def read_voltage(self):
     value = self.adc.analogRead(0) # read the ADC value of channel 0
     voltage = value / 255.0 * self.Vref # calculate the voltage value
     print ('ADC Value : %d, Voltage : %.2f'%(value,voltage))
+    time.sleep(0.1)
     return voltage
 
-  def destroy():
+  def destroy(self):
     self.adc.close()
 
 if __name__ == "__main__":
   potentionmeter = Potentionmeter()
   print('system start')
-  while True:
-    try:
-      Potentionmeter.voltage()
-      time.sleep(0.5)
-    except KeyboardInterrupt:
-      Potentionmeter.destroy()
-      break
+  try:
+      while True:
+          potentionmeter.read_voltage()
+          
+  except KeyboardInterrupt:
+      potentionmeter.destroy()
     
 
     
