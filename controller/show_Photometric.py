@@ -4,6 +4,8 @@ from ADCDevice import *
 class Photometer:
   def __init__(self):
     self.Vref = 3.3
+    self.bright = 0.99
+    self.dark = 0.2
     self.adc = ADCDevice()
     self.setup_adc()
 
@@ -27,7 +29,8 @@ class Photometer:
 
   def photometricPercentage(self):
      voltage =  self.read_voltage()
-     photometric_percentage = (1 - voltage / self.Vref) * 100
+     voltage_percentage = (1 - voltage / self.Vref)
+     photometric_percentage = round((voltage_percentage-self.dark)/(self.bright-self.dark)*100,1)
      return photometric_percentage
 
   def destroy(self):
@@ -38,7 +41,7 @@ if __name__ == "__main__":
   try:
       while True:
         photometric = sensor.photometricPercentage()
-        print('photometric : %.2f percent'%(photometric))
+        print('photometric : %.1f percent'%(photometric))
         time.sleep(1)
   except KeyboardInterrupt:
     sensor.destroy()
